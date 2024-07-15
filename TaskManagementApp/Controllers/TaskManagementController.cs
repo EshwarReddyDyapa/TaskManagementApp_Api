@@ -15,10 +15,12 @@ namespace TaskManagementApp.Controllers
     public class TaskManagementController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IWebHostEnvironment _env;
 
-        public TaskManagementController(ApplicationDbContext dbContext)
+        public TaskManagementController(ApplicationDbContext dbContext, IWebHostEnvironment env)
         {
             this.dbContext = dbContext;
+            _env = env;
         }
 
         // To-Do BEFORE UI
@@ -187,6 +189,36 @@ namespace TaskManagementApp.Controllers
 
             return Ok(result);
 
+        }
+
+        [HttpPost("UploadFile")]
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile file, [FromForm] int taskId, [FromForm] string content)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file provided");  
+
+            var uploadDir = Path.Combine(_env.ContentRootPath, "uploads");
+            if (!Directory.Exists(uploadDir))
+                Directory.CreateDirectory(uploadDir);
+
+            var filePath = Path.Combine(uploadDir, Guid.NewGuid() + Path.GetExtension(file.FileName));
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            var note = new Note
+            {
+                Content = content,
+                TaskId = taskId,
+                PathToDoc = filePath
+            };
+
+            dbContext.Notes.Add(note);
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { filePath });
         }
 
     }
