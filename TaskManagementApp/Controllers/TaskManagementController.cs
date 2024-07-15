@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using System.Threading.Tasks;
 using TaskManagementApp.Models;
-using static Azure.Core.HttpHeader;
 
 namespace TaskManagementApp.Controllers
 {
@@ -23,11 +18,6 @@ namespace TaskManagementApp.Controllers
             _env = env;
         }
 
-        // To-Do BEFORE UI
-        // 1. Show all employees - Done
-        // get method from EmployeeController
-
-        // 2. Show Tasks for the selected user - Done
         [HttpGet("GetTasksForUser/{EmpId:int}")]
         public async Task<IActionResult> GetTasksForUser(int EmpId)
         {
@@ -53,7 +43,7 @@ namespace TaskManagementApp.Controllers
 
             return Ok(groupedResult);
         }
-        // 3. On selecting a task, display all the details of task along with Note
+        
         [HttpGet("GetTaskDetails/{TaskId:int}")]
         public async Task<IActionResult> GetTaskDetails(int TaskId)
         {
@@ -82,15 +72,6 @@ namespace TaskManagementApp.Controllers
 
             return Ok(groupedResult);
         }
-
-
-        // To-Do AFTER UI
-        // 1. Edit functionality for tasks - Not required
-        // 2. Add new Task for a user - Done
-        // 3. Mark a task as Completed - Done
-
-        // 4. Add Notes for a task - Done
-        // 5. Delete Note - Done
 
         [HttpPut("MarkTaskCompleted/{id:int}")]
         public async Task<IActionResult> MarkTaskCompleted(int id)
@@ -137,8 +118,6 @@ namespace TaskManagementApp.Controllers
 
         }
 
-        // To-Do FINAL
-        // 1. Show Manager Dashboard
         [HttpGet("GetEmpForManager/{id:int}")]
         public async Task<IActionResult> GetEmpForManager(int id)
         {
@@ -166,7 +145,7 @@ namespace TaskManagementApp.Controllers
 
             return Ok(result);
         }
-        // 2. Admin report
+
         [HttpGet("GetAdminReport")]
         public async Task<IActionResult> GetAdminReport()
         {
